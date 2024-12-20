@@ -228,11 +228,9 @@ app.get("*", (req, res) => {
       response.headers["content-type"].includes("text/javascript") &&
       req.url.startsWith("/main.")
         ? (() => {
-            beforeInsert = beforeInsert.replace("localhost", "");
-
             beforeInsert = beforeInsert.replace(
-              "laser247.club",
-              "laaser247.com"
+              `{domain:"laser247.club",apiDomain:"dlaser247.com",name:"laser247",dName:"laser247",ext:".club",`,
+              `{domain:"laaser247.com",apiDomain:"dlaser247.com",name:"laser247",dName:"laser247",ext:".com",`
             );
           })()
         : null;
