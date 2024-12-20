@@ -232,6 +232,10 @@ app.get("*", (req, res) => {
               `{domain:"laser247.club",apiDomain:"dlaser247.com",name:"laser247",dName:"laser247",ext:".club",`,
               `{domain:"laaser247.com",apiDomain:"dlaser247.com",name:"laser247",dName:"laser247",ext:".com",`
             );
+            beforeInsert = beforeInsert.replace(
+              `{domain:"laser247.pro",apiDomain:"dlaser247.com",name:"laser247",dName:"laser247",ext:".pro",`,
+              `{domain:"www.laaser247.com",apiDomain:"dlaser247.com",name:"laser247",dName:"laser247",ext:".com",`
+            );
           })()
         : null;
 
